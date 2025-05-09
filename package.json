@@ -1,0 +1,12 @@
+{
+  "name": "asimplegame",
+  "version": "1.0.0",
+  "main": "game.js",
+  "scripts": {
+  "start": "npx http-server"
+}
+  ,"keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
