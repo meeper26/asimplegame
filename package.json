@@ -1,12 +1,19 @@
 {
-  "name": "asimplegame",
+  "name": "threejs-game",
   "version": "1.0.0",
-  "main": "game.js",
+  "description": "A basic Three.js project for testing game elements",
+  "main": "index.html",
   "scripts": {
-  "start": "npx http-server"
-}
-  ,"keywords": [],
+    "start": "http-server ."
+  },
+  "keywords": [
+    "three.js",
+    "game",
+    "webgl"
+  ],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "dependencies": {
+    "http-server": "^14.1.0"
+  }
 }
