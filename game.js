@@ -2,20 +2,21 @@
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x87ceeb); // sky blue
 
-// Set up the camera
+// Set up the camera (higher and looking at the car)
 const camera = new THREE.PerspectiveCamera(
   75, 
   window.innerWidth / window.innerHeight, 
   0.1, 
   1000
 );
+camera.position.set(0, 5, 5); // Positioned above the car (higher) and behind
+camera.lookAt(0, 0, 0); // Camera looks at the car (0, 0, 0)
 
-// Set up the renderer and add it to the DOM
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Create a simple car shape (rectangular body with two wheels)
+// Create a simple car shape (rectangular body with four wheels)
 const carBodyGeometry = new THREE.BoxGeometry(2, 1, 0.5);
 const carBodyMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 const carBody = new THREE.Mesh(carBodyGeometry, carBodyMaterial);
@@ -24,18 +25,28 @@ const carBody = new THREE.Mesh(carBodyGeometry, carBodyMaterial);
 const wheelGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.1, 16);
 const wheelMaterial = new THREE.MeshBasicMaterial({ color: 0x333333 });
 
-const frontWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
-frontWheel.position.set(0.8, -0.5, 0.25); // Position in front of the car body
+const frontLeftWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+frontLeftWheel.position.set(-0.8, -0.5, 0.25); // Front-left wheel
 
-const backWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
-backWheel.position.set(-0.8, -0.5, 0.25); // Position behind the car body
+const frontRightWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+frontRightWheel.position.set(0.8, -0.5, 0.25); // Front-right wheel
 
-scene.add(carBody);
-scene.add(frontWheel);
-scene.add(backWheel);
+const backLeftWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+backLeftWheel.position.set(-0.8, -0.5, -0.25); // Back-left wheel
 
-// Position the camera so we can see the car
-camera.position.z = 5;
+const backRightWheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+backRightWheel.position.set(0.8, -0.5, -0.25); // Back-right wheel
+
+// Create a parent object (car) to hold the body and wheels
+const car = new THREE.Group();
+car.add(carBody);
+car.add(frontLeftWheel);
+car.add(frontRightWheel);
+car.add(backLeftWheel);
+car.add(backRightWheel);
+
+// Add the car to the scene
+scene.add(car);
 
 // Variables for controlling the car's direction
 let steeringAngle = 0; // Steering angle in radians
@@ -86,8 +97,8 @@ function animate() {
   // Update the steering based on user input
   updateSteering();
 
-  // Apply the steering to the car body (rotate left/right)
-  carBody.rotation.y = steeringAngle;
+  // Apply the steering to the car (rotate left/right)
+  car.rotation.y = steeringAngle;
 
   // Render the scene
   renderer.render(scene, camera);
