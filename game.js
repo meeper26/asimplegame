@@ -1,70 +1,45 @@
-// Basic Three.js setup
+// Initialize scene
 const scene = new THREE.Scene();
+
+// Set up camera
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+// Set up renderer
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Create a simple car (a box for now)
-const carGeometry = new THREE.BoxGeometry(2, 1, 4);
-const carMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-const car = new THREE.Mesh(carGeometry, carMaterial);
-scene.add(car);
+// Create a simple cube (green)
+const geometry = new THREE.BoxGeometry();
+const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+const cube = new THREE.Mesh(geometry, material);
+scene.add(cube);
 
-// Create a flat plane as terrain
-const planeGeometry = new THREE.PlaneGeometry(100, 100);
-const planeMaterial = new THREE.ShadowMaterial({ opacity: 0.5 });
-const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-plane.rotation.x = - Math.PI / 2;  // Rotate plane to be flat
-plane.position.y = -1;
-scene.add(plane);
+// Load skybox textures
+const loader = new THREE.CubeTextureLoader();
+scene.background = loader.load([
+  'https://cdn.jsdelivr.net/gh/mrdoob/three.js/examples/textures/skybox/px.jpg',  // Positive X
+  'https://cdn.jsdelivr.net/gh/mrdoob/three.js/examples/textures/skybox/nx.jpg',  // Negative X
+  'https://cdn.jsdelivr.net/gh/mrdoob/three.js/examples/textures/skybox/py.jpg',  // Positive Y
+  'https://cdn.jsdelivr.net/gh/mrdoob/three.js/examples/textures/skybox/ny.jpg',  // Negative Y
+  'https://cdn.jsdelivr.net/gh/mrdoob/three.js/examples/textures/skybox/pz.jpg',  // Positive Z
+  'https://cdn.jsdelivr.net/gh/mrdoob/three.js/examples/textures/skybox/nz.jpg'   // Negative Z
+]);
 
-// Set the camera behind the car
-camera.position.z = 10;
-camera.position.y = 5;
-camera.lookAt(car.position);
+// Set up controls (using simple keyboard input to rotate the cube)
+let rotationSpeed = 0.01; // Speed of cube rotation
 
-// Car movement variables
-let carSpeed = 0;
-let carTurn = 0;
-
-// Listen for keypresses to control the car
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'w' || event.key === 'ArrowUp') carSpeed = 0.1;
-  if (event.key === 's' || event.key === 'ArrowDown') carSpeed = -0.1;
-  if (event.key === 'a' || event.key === 'ArrowLeft') carTurn = 0.05;
-  if (event.key === 'd' || event.key === 'ArrowRight') carTurn = -0.05;
-});
-
-document.addEventListener('keyup', (event) => {
-  if (event.key === 'w' || event.key === 's' || event.key === 'ArrowUp' || event.key === 'ArrowDown') carSpeed = 0;
-  if (event.key === 'a' || event.key === 'd' || event.key === 'ArrowLeft' || event.key === 'ArrowRight') carTurn = 0;
-});
-
-// Game loop
 function animate() {
   requestAnimationFrame(animate);
 
-  // Move the car
-  car.position.x += carSpeed * Math.sin(car.rotation.y);
-  car.position.z -= carSpeed * Math.cos(car.rotation.y);
+  // Rotate the cube
+  cube.rotation.x += rotationSpeed;
+  cube.rotation.y += rotationSpeed;
 
-  // Turn the car
-  car.rotation.y += carTurn;
-
-  // Update camera position
-  camera.position.x = car.position.x + 10 * Math.sin(car.rotation.y);
-  camera.position.z = car.position.z - 10 * Math.cos(car.rotation.y);
-  camera.lookAt(car.position);
-
+  // Render the scene
   renderer.render(scene, camera);
 }
 
-// Resize handler
-window.addEventListener('resize', () => {
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-});
-
+// Adjust camera position and start animation
+camera.position.z = 5;
 animate();
